@@ -1,0 +1,241 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class node {
+private:
+	int val;
+	node* prev;
+	node* next;
+public:
+	node() :val{ 10000 }, prev{ nullptr }, next{ nullptr } {}
+	node(int val) :val{ val }, prev{ nullptr }, next{ nullptr } {}
+	friend class D_linkedList;
+};
+
+class D_linkedList {
+private:
+	node* header;
+	node* trailer;
+	int size;
+public:
+	D_linkedList() {
+		header = new node;
+		trailer = new node;
+		header->next = trailer;
+		trailer->prev = header;
+		size = 0;
+	}
+	bool empty() {
+		return (size == 0);
+	}
+	void Print() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = header->next;
+		for (int i = 0; i < size; i++) {
+			cout << curNode->val << " ";
+			curNode = curNode->next;
+		}
+		cout << endl;
+		return;
+	}
+	void Insert(int i, int x) {
+		node* newNode = new node{ x };
+		node* curNode = header->next;
+		if (i > size) {
+			cout << "error" << endl;
+			return;
+		}
+		if (empty()) {
+			newNode->prev = header;
+			newNode->next = trailer;
+			header->next = newNode;
+			trailer->prev = newNode;
+			size++;
+			return;
+		}
+		if (i == size) {
+			newNode->next = trailer;
+			newNode->prev = trailer->prev;
+			trailer->prev->next = newNode;
+			trailer->prev = newNode;
+			size++;
+			return;
+		}
+		for (int j = 0; j < i; j++) {
+			curNode = curNode->next;
+		}
+		newNode->prev = curNode->prev;
+		newNode->next = curNode;
+		curNode->prev->next = newNode;
+		curNode->prev = newNode;
+		size++;
+		return;
+	}
+
+	void Remove(int i) {
+		if (empty() || i >= size) {
+			cout << "error" << endl;
+			return;
+		}
+		node* delNode;
+		if (size == 1) { //원소가 1개 일때
+			delNode = header->next;
+			cout << delNode->val << endl;
+			delete delNode;
+			header->next = trailer;
+			trailer->prev = header;
+			size--;
+			return;
+		}
+		if (i == 0) { //맨 앞 삭제
+			delNode = header->next;
+			cout << delNode->val << endl;
+			delNode->next->prev = header;
+			header->next = delNode->next;
+			delete delNode;
+			size--;
+			return;
+		}
+		if (i == size - 1) { //맨 뒤 삭제
+			delNode = trailer->prev;
+			cout << delNode->val << endl;
+			delNode->prev->next = trailer;
+			trailer->prev = delNode->prev;
+			delete delNode;
+			size--;
+			return;
+		}
+
+		delNode = header->next;
+		for (int j = 0; j < i; j++) {
+			delNode = delNode->next;
+		}
+		cout << delNode->val << endl;
+		delNode->prev->next = delNode->next;
+		delNode->next->prev = delNode->prev;
+		delete delNode;
+		size--;
+		return;
+	}
+	
+	void Remove2(int i) {
+		node* delNode;
+		if (size == 1) { //원소가 1개 일때
+			delNode = header->next;
+			delete delNode;
+			header->next = trailer;
+			trailer->prev = header;
+			size--;
+			return;
+		}
+		if (i == 0) { //맨 앞 삭제
+			delNode = header->next;
+			delNode->next->prev = header;
+			header->next = delNode->next;
+			delete delNode;
+			size--;
+			return;
+		}
+		if (i == size - 1) { //맨 뒤 삭제
+			delNode = trailer->prev;
+			delNode->prev->next = trailer;
+			trailer->prev = delNode->prev;
+			delete delNode;
+			size--;
+			return;
+		}
+
+		delNode = header->next;
+		for (int j = 0; j < i; j++) {
+			delNode = delNode->next;
+		}
+		delNode->prev->next = delNode->next;
+		delNode->next->prev = delNode->prev;
+		delete delNode;
+		size--;
+		return;
+	}
+
+	void RemoveAll(int x) {
+		if (empty()) {
+			cout << "not found" << endl;
+			return;
+		}
+		node* curNode = header->next;
+		int cnt = 0;
+		int index=0;
+		while (curNode->next != nullptr) {
+			if (curNode->val == x) {
+				curNode = curNode->next;
+				Remove2(index);
+				cnt++;
+			}
+			else {
+				curNode = curNode->next;
+				index++;
+			}
+		}
+		if (cnt != 0) {
+			cout << cnt << endl;
+			return;
+		}
+		cout << "not found" << endl;
+		return;
+
+	}
+	void NeighborMin(int i) {
+		if (i >= size) {
+			cout << "error" << endl;
+			return;
+		}
+
+		node* curNode = header->next;
+		int prev_val;
+		int next_val;
+		for (int j = 0; j < i ; j++) {
+			curNode = curNode->next;
+		}
+		prev_val = curNode->prev->val;
+		next_val = curNode->next->val;
+	
+		if (prev_val <= next_val)
+			cout << prev_val << endl;
+		else
+			cout << next_val << endl;
+		return;
+	}
+};
+
+int main() {
+	int m, i, x;
+	cin >> m;
+	string str;
+	D_linkedList dlL;
+	while (m--) {
+		cin >> str;
+		if (str == "Print") {
+			dlL.Print();
+		}
+		else if (str == "Insert") {
+			cin >> i >> x;
+			dlL.Insert(i, x);
+		}
+		else if (str == "Remove") {
+			cin >> i;
+			dlL.Remove(i);
+		}
+		else if (str == "RemoveAll") {
+			cin >> x;
+			dlL.RemoveAll(x);
+		}
+		else if (str == "NeighborMin") {
+			cin >> i;
+			dlL.NeighborMin(i);
+		}
+	}
+	return 0;
+}
