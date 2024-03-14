@@ -1,1 +1,153 @@
+#include <iostream>
+using namespace std;
 
+class node {
+private:
+	int val;
+	node* next;
+public:
+	node(int val) {
+		this->val = val;
+		next = nullptr;
+	}
+	void setNext(node* nextNode) {
+		this->next = nextNode;
+	}
+
+	node* getNext() {
+		return next;
+	}
+	int getVal() {
+		return val;
+	}
+	friend class linkedList;
+	
+};
+
+class linkedList {
+private:
+	node* head;
+	node* tail;
+	int size;
+public:
+	linkedList()
+		:head{0}, tail{0}, size{0} {}
+	bool empty() {
+		if (size == 0) {
+			return 1;
+		}
+		return 0;
+	}
+
+	void Print() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = head;
+		for (int i = 0; i < size; i++) {
+			cout << curNode->val << " ";
+			curNode = curNode->next;
+		}
+		cout << endl;
+		return;
+	}
+
+	void AddFront(int x) {
+		node* newNode = new node(x);
+		if (empty()) {
+			newNode->val = x;
+			head = newNode;
+			tail = newNode;
+		}
+		else {
+			newNode->next = head;
+			newNode->val = x;
+			head = newNode;
+		}
+		size++;
+		return;
+	}
+
+	int RemoveFront() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return -1;
+		}
+		node* node = head;
+		int val = node->getVal();
+		if (size == 1) {
+			head = tail = nullptr;
+			return val;
+		}
+		size--;
+		head = node->getNext();
+		
+		return val;
+	}
+
+	void Update(int i, int x) {
+		if (empty()||i>=size) {
+			cout << "error" << endl;
+			return;
+		}
+		node* node = head;
+		for (int j = 0; j < size; j++) {
+			if (j == i) {
+				node->val = x;
+				return;
+			}
+			node = node->next;
+		}
+		return;
+	}
+
+	void Min() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		int min, loc;
+		node* node = head;
+		min = node->getVal();
+		loc = 0;
+		for (int i = 0; i < size; i++) {
+			if (node->getVal() < min) {
+				min = node->getVal();
+				loc = i;
+			}
+			node = node->getNext();
+		}
+		cout << loc << " " << min << endl;
+		return;
+	}
+};
+
+int main() {
+	int m, i, x;
+	cin >> m;
+	string str;
+	linkedList single;
+
+	while (m--) {
+		cin >> str;
+		if (str == "Print") {
+			single.Print();
+		}
+		else if (str == "AddFront") {
+			cin >> x;
+			single.AddFront(x);
+		}
+		else if (str == "RemoveFront") {
+			cout << single.RemoveFront() << endl;
+		}
+		else if (str == "Update") {
+			cin >> i >> x;
+			single.Update(i, x);
+		}
+		else if (str == "Min") {
+			single.Min();
+		}
+	}
+	return 0;
+}
