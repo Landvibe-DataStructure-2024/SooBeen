@@ -1,0 +1,143 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class node {
+private:
+	int val;
+	node* next;
+public:
+	node() :val{ 0 }, next{ nullptr } {}
+	node(int val) :val{ val }, next{ nullptr } {}
+	friend class linkedList;
+};
+
+class linkedList {
+private:
+	node* head;
+	node* tail;
+	int size;
+public:
+	linkedList() {}
+	bool empty() {
+		if (size == 0)
+			return 1;
+		return 0;
+	}
+	
+	void Print() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = head;
+		for (int i = 0; i < size; i++) {
+			cout << curNode->val << " ";
+			curNode = curNode->next;
+		}
+		cout << endl;
+		return;
+	}
+
+	void AddBack(int x) {
+		node* newNode = new node{ x };
+		if (empty()) {
+			head = newNode;
+			tail = newNode;
+			size++;
+			return;
+		}
+
+		tail->next = newNode;
+		tail = newNode;
+		size++;
+		return;
+	}
+
+	void RemoveBack() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = head;
+		node* preNode = nullptr;
+		for (int i = 0; i < size; i++) {
+			if (i == size - 1) {
+				cout << curNode->val << endl;
+				delete curNode;
+				preNode->next = nullptr;
+				tail = preNode;
+				size--;
+				return;
+			}
+			preNode = curNode;
+			curNode = curNode->next;
+		}
+	}
+
+	void Update(int i, int x) {
+		if (empty() || i >= size) {
+			cout << "error" << endl;
+			return;
+		}
+		node* curNode = head;
+		for(int j=0;j<=i;j++){
+			if (j == i) {
+				curNode->val = x;
+				return;
+			}
+			curNode = curNode->next;
+		}
+	}
+
+	void Max() {
+		if (empty()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = head;
+		int max = curNode->val;
+		int loc = 0;
+		for (int i = 0; i < size; i++) {
+			if (curNode->val > max) {
+				max = curNode->val;
+				loc = i;
+			}
+			curNode = curNode->next;
+		}
+		cout << loc << " " << max << endl;
+		return;
+	}
+};
+
+int main() {
+	int m, i, x;
+
+	string str;
+
+	cin >> m;
+
+	linkedList list;
+
+	while (m--) {
+		cin >> str;
+		if (str == "Print") {
+			list.Print();
+		}
+		else if (str == "AddBack") {
+			cin >> x;
+			list.AddBack(x);
+		}
+		else if (str == "RemoveBack") {
+			list.RemoveBack();
+		}
+		else if (str == "Max") {
+			list.Max();
+		}
+		else if (str == "Update") {
+			cin >> i >> x;
+			list.Update(i, x);
+		}
+	}
+	return 0;
+}
