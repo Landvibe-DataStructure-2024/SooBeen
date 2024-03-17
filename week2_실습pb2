@@ -1,0 +1,161 @@
+#include <iostream>
+#include <string>
+using namespace std;
+
+class node {
+private:
+	int val;
+	node* next;
+public:
+	node() :val{ -1 }, next{ nullptr } {}
+	node(int val) :val{ val }, next{ nullptr } {}
+	friend class S_linkedList;
+	int getVal() {
+		return val;
+	}
+	node* getNext() {
+		return next;
+	}
+};
+
+class S_linkedList {
+private:
+	int size;
+	node* head;
+	node* tail;
+
+public:
+	S_linkedList() :head{ nullptr }, tail{ nullptr }, size{ 0 } {}
+	/*
+	~S_linkedList() {
+		int index = 0;
+		node* delNode = head;
+		node* nextNode = head;
+		while (delNode->next != nullptr) {
+			nextNode = delNode->next;
+			Delete(delNode->val);
+			delNode = nextNode;
+		}
+	}
+	*/
+	bool empty1() {
+		return (size == 0);
+	}
+	void Print() {
+		if (empty1()) {
+			cout << "empty" << endl;
+			return;
+		}
+		node* curNode = head;
+		for (int i = 0; i < size; i++) {
+			cout << curNode->val << " ";
+			curNode = curNode->next;
+		}
+		cout << endl;
+		return;
+	}
+	void Append(int x) {
+		node* newNode = new node{ x };
+
+		if (empty1()) {
+			head = newNode;
+			tail = newNode;
+			size++;
+			return;
+		}
+
+		tail->next = newNode;
+		tail = newNode;
+		size++;
+		return;
+	}
+	void Delete(int i) {
+		node* delNode = head;
+		node* preNode = head;
+
+		if (size == 1) {
+			head = nullptr;
+			tail = nullptr;
+			size--;
+		}
+
+		else {
+			while (delNode->val!=i) {
+				preNode = delNode;
+				delNode = delNode->next;
+			}
+
+			if (delNode == head) {
+				head = delNode->next;
+			}
+
+			else {
+				preNode->next = delNode->next;
+				if (delNode == tail) {
+					tail = preNode;
+				}
+			}
+
+			size--;
+		}
+
+		delete delNode;
+		return;
+	}
+	int Find(int k) {
+		node* curNode = head;
+		int index{ 0 };
+		while (curNode->val != k) {
+			curNode = curNode->next;
+			index++;
+		}
+		return index;
+		
+	}
+	node* getHead() {
+		return head;
+	}
+	node* getTail() {
+		return tail;
+	}
+	int getSize() {
+		return size;
+	}
+};
+
+void merge(S_linkedList* first, S_linkedList* second) {
+	node* curNode = second->getHead();
+	for (int i = 0; i < second->getSize(); i++) {
+		first->Append(curNode->getVal());
+		curNode=curNode->getNext();
+	}
+}
+
+int main() {
+	int m, a, b, x;
+	cin >> m;
+	while (m--) {
+		S_linkedList* s1 = new S_linkedList;
+		S_linkedList* s2 = new S_linkedList;
+		cin >> a;
+		while (a--) {
+			cin >> x;
+			s1->Append(x);
+		}
+		cin >> b;
+		while (b--) {
+			cin >> x;
+			s2->Append(x);
+		}
+		merge(s1, s2);
+		s1->Print();
+		cin >> x;
+		s1->Delete(x);
+		s1->Print();
+		cin >> x;
+		cout << s1->Find(x) << endl;
+		delete s1;
+		delete s2;
+	}
+
+}
